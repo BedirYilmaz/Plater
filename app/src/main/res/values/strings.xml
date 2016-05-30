@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">Plater</string>
+    <string name="ok_button">Ok</string>
+    <string name="erase_button">Erase</string>
+    <string name="update_button">Update</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
+    <string name="data_downlad">Downloading necessary informaiton</string>
+</resources>
