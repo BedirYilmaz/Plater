@@ -153,12 +153,6 @@ public class MainActivity extends AppCompatActivity
         searchView.setOnQueryTextListener(this);
         searchView.setOnCloseListener(this);
 
-        /*
-        db.createPlate("43 ADSF 23", "Wei Meng Lee");
-        db.createPlate("12 QEWR 993", "Bill Phillips and Brian Hardy");
-        db.createPlate("06 URNU 324", "Wallace Jackson");
-        */
-
         plateList = db.searchPlate(searchView.getQuery().toString());
         Cursor plateCursor = db.searchPlateWithCursor(searchView.getQuery().toString());
         final ListView l = (ListView) findViewById(R.id.listView1);
@@ -217,7 +211,9 @@ public class MainActivity extends AppCompatActivity
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         // TODO Update page code
-
+                        Intent intent = new Intent(MainActivity.this,AddPlateActivity.class);
+                        intent.putExtra("PlateCode",selected.getPlate());
+                        startActivity(intent);
                     }
                 });
                 dialogBuilder.create().show();

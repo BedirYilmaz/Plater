@@ -67,7 +67,7 @@ public class DBPolHelper {
         }
     }
 
-    private static final String[] COLUMNS = {KEY_ID,KEY_PLATE,KEY_RECORD};
+    private static final String[] COLUMNS = {KEY_PLATE, KEY_RECORD, KEY_SEARCH};
 
     public DBPolHelper(Context ctx) {
         this.mCtx = ctx;
@@ -93,7 +93,7 @@ public class DBPolHelper {
                 KEY_PLATE + "," +
                 KEY_RECORD +
                 " from " + FTS_VIRTUAL_TABLE +
-                " where " +  KEY_SEARCH + " MATCH '" + inputText + "';";
+                " where " +  KEY_SEARCH + " MATCH '*" + inputText + "*';";
 
         Log.w(TAG, query);
         Cursor mCursor = mDb.rawQuery(query,null);
@@ -113,7 +113,7 @@ public class DBPolHelper {
                 KEY_PLATE + "," +
                 KEY_RECORD +
                 " from " + FTS_VIRTUAL_TABLE +
-                " where " +  KEY_SEARCH + " MATCH '" + inputText + "';";
+                " where " +  KEY_SEARCH + " MATCH '*" + inputText + "*';";
         Log.w(TAG, query);
         Cursor mCursor = mDb.rawQuery(query,null);
 
@@ -148,14 +148,14 @@ public class DBPolHelper {
 
     }
 
-    public Plate getPlate(int id){
+    public Plate getPlate(String plateCode){
 
         // 2. build query
         Cursor cursor =
                 mDb.query(FTS_VIRTUAL_TABLE, // a. table
                         COLUMNS, // b. column names
-                        " id = ?", // c. selections
-                        new String[] { String.valueOf(id) }, // d. selections args
+                        " plate = ?", // c. selections
+                        new String[] { plateCode }, // d. selections args
                         null, // e. group by
                         null, // f. having
                         null, // g. order by
@@ -167,12 +167,11 @@ public class DBPolHelper {
 
         // 4. build book object
         Plate plate = new Plate();
-        plate.setId(Integer.parseInt(cursor.getString(0)));
-        plate.setPlate(cursor.getString(1));
-        plate.setRecord(cursor.getString(2));
+        plate.setPlate(cursor.getString(0));
+        plate.setRecord(cursor.getString(1));
 
         //log
-        Log.d("getPlate(" + id + ")", plate.toString());
+        Log.d("getPlate(" + plateCode + ")", plate.toString());
 
         // 5. return book
         return plate;
@@ -182,14 +181,14 @@ public class DBPolHelper {
 
         // 2. create ContentValues to add key "column"/value
         ContentValues values = new ContentValues();
-        values.put("title", plate.getPlate()); // get title
-        values.put("author", plate.getRecord()); // get author
+        values.put(KEY_RECORD, plate.getRecord()); // get author
+        values.put(KEY_SEARCH, plate.getPlate() + " " + plate.getRecord());
 
         // 3. updating row
         int i = mDb.update(FTS_VIRTUAL_TABLE, //table
                 values, // column/value
-                KEY_ID+" = ?", // selections
-                new String[] { String.valueOf(plate.getId()) }); //selection args
+                KEY_PLATE + " = ?", // selections
+                new String[] { plate.getPlate() }); //selection args
 
         // 4. close
         mDb.close();
